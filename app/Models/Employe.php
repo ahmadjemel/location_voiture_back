@@ -11,6 +11,11 @@ class Employe extends Model
     protected $fillable=[
         'nom',
         'prenom',
-        'post',
+        'email'
+
     ];
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

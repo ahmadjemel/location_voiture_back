@@ -4,129 +4,116 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Voiture;
-use App\Models\reservation;
-
+use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 
 class ReservationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $reservations=Reservation::paginate(10);
-        return view ('reservation.liste',compact("reservations"))->with('i',(request('page',1)-1)* 10);
+        $reservations = Reservation::with('voiture', 'client')->get();
+        return view('reservation.index', compact('reservations'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create($voitureId)
     {
-        $voiture = Voiture ::findOrFail($voitureId);
-        $clients =Client::all();
-        return view('reservation.create',compact('voiture','clients'));
+        $voiture = Voiture::findOrFail($voitureId);
+        $clients = Client::all();
+        return view('reservation.create', compact('voiture', 'clients'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        $validated = $this->validate($request, [
+            'voiture_id' => 'required',
+            'date_debut' => 'required|before:date_fin',
+            'date_fin' => 'required|after:date_debut',
+            'saisson' => 'nullable|string|max:255',
+            'cin' => 'required',
+        ]);
 
-    $request->validate([
-        'nom' => 'required|string',
-        'prenom' => 'required|string',
-         'cin' => 'required|numeric',
-         'tel' => 'required|numeric',
+        $client = Client::where('cin', $validated['cin'])->first();
 
-        'date_debut' => 'required|date',
-        'date_fin' => 'required|date|after:date_debut',
+        if (!$client) {
+            $client = new Client();
+            $client->nom = $request->input('nom');
+            $client->prenom = $request->input('prenom');
+            $client->cin = $request->input('cin');
+            $client->tel = $request->input('tel');
+            $client->email = $request->input('email');
+            $client->save();
+        }
 
-        'saison' => 'string|in:hiver,été',
+        $voiture = $request->input('voiture_id');
+        $debut = $request->input('date_debut');
+        $fin = $request->input('date_fin');
 
-    ]);
-    $reservation = new Reservation([
-        'nom' => $request->input('nom'),
-        'prenom' => $request->input('prenom'),
-        'cin' => $request->input('cin'),
-        'tel' => $request->input('tel'),
-        'date_debut' => $request->input('date_debut'),
-        'date_fin' => $request->input('date_fin'),
-    ]);
-    $reservation->save();
-     $voiture = Voiture::find($request->input('voiture_id'));
-        $voiture->reservations()->save($reservation);
-        return redirect()->route("reservation.liste")
-        ->with('success','Reservation enregistrée avec succès.');
+        $reserve = Reservation::where('voiture_id', $voiture)
+            ->where(function ($query) use ($debut, $fin) {
+                $query->whereBetween('date_debut', [$debut, $fin])
+                    ->orWhereBetween('date_fin', [$debut, $fin])
+                    ->orWhere(function ($query) use ($debut, $fin) {
+                        $query->where('date_debut', '<', $debut)
+                            ->where('date_fin', '>', $fin);
+                    });
+            })
+            ->get();
 
+        if ($reserve->isEmpty()) {
+            // Create a new Reservation
+            $reservation = new Reservation();
+            $reservation->client_id = $client->id;
+            $reservation->voiture_id = $request->input('voiture_id');
+            $reservation->date_debut = date('Y-m-d');
+            $reservation->date_fin = Carbon::parse($reservation->date_debut)->addWeek();
+            $reservation->saisson = $request->input('saisson');
+            $reservation->save();
+
+            return redirect()->route('reservation.index')->with('success','Réservation Validé avec succés') ;
+        } else {
+            // La voiture n'est pas disponible aux dates spécifiées
+            return redirect()->route('voiture.index')->with('error','Désolé, n\'est pas disponible ');
+        }
+    
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(reservation $reservation)
+    public function show(Reservation $reservation)
     {
-        return view("reservation.show",compact("reservation"));
+        return view("reservation.show", compact("reservation"));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(reservation $reservation)
+    public function edit(Reservation $reservation)
     {
-        //
+        return view('reservation.edit', compact('reservation'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, reservation $reservation)
+    public function update(Request $request, Reservation $reservation)
     {
-        //
+        $reservation->update($request->all());
+        return redirect()->route('reservation.index')->with('success', 'Réservation mise à jour avec succès');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(reservation $reservation)
+    public function destroy(Reservation $reservation)
     {
         $reservation->delete();
-        return redirect()->route("reservation.liste")->with('Annulation effectuée');
-
+        return redirect()->route("reservation.index")->with('success', 'Suppression effectuée');
     }
+
     public function reserve(Request $request, $id)
     {
         $voiture = Voiture::find($id);
-
-        return redirect()->route('reservation.liste')->with('success', 'Réservation effectuée avec succès');
+        return redirect()->route('reservation.index')->with('success', 'Réservation effectuée avec succès');
     }
 
-public function annulerReservation($id){
-    $reservation=Reservation::where('id','=',$id)->firstOrFail();
-    $reservation->delete();
-    return back()->with('annulee','Votre réservation a été annulée');
-}
+    public function getReservation($voitureId)
+    {
+        $reservation = Reservation::where('voiture_id', $voitureId)->first();
 
-
-
-public function getReservation($voitureId)
-{
-    // Récupérez les données de réservation en fonction de $voitureId.
-    $reservation = Reservation::where('voiture_id', $voitureId)->first();
-
-    if ($reservation) {
-        return response()->json(['success' => true, 'reservation' => $reservation]);
-    } else {
-
-
-return response()->json(['success' => false, 'message' => 'Aucune réservation trouvée pour cette voiture.']);
+        if ($reservation) {
+            return response()->json(['success' => true, 'reservation' => $reservation]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Aucune réservation trouvée pour cette voiture.']);
+        }
     }
-}
-public function calculPrix(Request $request){
-
-}
-
 }

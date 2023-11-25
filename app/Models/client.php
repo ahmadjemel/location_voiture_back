@@ -10,9 +10,12 @@ class Client extends Model
     use HasFactory;
 
     protected $fillable=[
-        'cin','nom','prenom','tel','email','adresse','age'
-    ];
+        'cin','nom','prenom','tel','email'];
     public function reservations(){
-        return $this->belongsTO(Reservation::class);
+        return $this->hasMany(Reservation::class);
     }
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

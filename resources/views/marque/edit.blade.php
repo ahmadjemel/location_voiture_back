@@ -22,7 +22,8 @@
 
                 <div class="mb-3 col-sm-3">
                     <button class="btn btn-info">Valider</button>
-                    
+                    <a href="{{route('marque.index')}}" class=" btn btn-danger">Annullé</a>
+
                 </div>
             </div>
       </div>

@@ -77,8 +77,9 @@
         <label class="container label-control mb-3 " for="prix">Prix</label>
         <input  type="text" class="form-control " name="prix" id="prix">
       </div>
-
-         <button class="w-100 btn btn-primary text-center">Ajouter</button>
+         <div class=" container">
+          <button class=" btn btn-primary ">Ajouter</button>
+         </div>
 
 
     </div>

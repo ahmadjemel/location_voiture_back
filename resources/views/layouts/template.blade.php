@@ -42,14 +42,25 @@
     <h1> @yield("title") </h1>
 
 </div>
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper p-3 ">
-    @if (Session::has("success"))
+    <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper p-3 ">
+            @if (Session::has("success"))
 
-<div class="alert alert-success"> {{Session::get("success")}}</div>
-@endif
-   @yield("content")
+        <div class="alert alert-success"> {{Session::get("success")}}</div>
+        @endif
+        
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+      @endif
+@yield("content")
   </div>
+
   <!-- /.content-wrapper -->
  @include("layouts.footer")
   <!-- Control Sidebar -->
@@ -84,8 +95,8 @@
   $(function () {
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-12:eq(0)');
+      "buttons": ["", "", "print", ""]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
@@ -95,19 +106,7 @@
       "autoWidth": false,
       "responsive": true,
     });
-    $("#example3").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
 
-    }).buttons().container().appendTo('#example3_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
   });
 </script>
 

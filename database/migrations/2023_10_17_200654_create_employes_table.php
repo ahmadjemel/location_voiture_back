@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string("prenom",10);
             $table->string('post',80);
             $table->double("salaire",11,3);
-            $table->string("login",20)->unique();
+            $table->string("email",20)->unique();
             $table->string("password",20);
+
             $table->timestamps();
         });
     }

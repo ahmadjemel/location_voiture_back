@@ -47,8 +47,8 @@
            </div>
            <div class="card-body row">
                <div class="mb-3 col-sm-3">
-               <label class="label-control  mb-3 " for="login">Login</label>
-               <input class="form-control mb-3" type="text" id="login" name="login"value="{{$employe->login}}"required placeholder="login">
+               <label class="label-control  mb-3 " for="email">Email</label>
+               <input class="form-control mb-3" type="text" id="email" name="email"value="{{$employe->email}}"required placeholder="email">
                </div>
            </div>
            <div class="card-body row">

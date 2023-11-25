@@ -24,10 +24,6 @@
         <label class=" container label-control mb-3"  for="prenom">Prenom</label>
         <input class="form-control mb-3" type="text" placeholder="prenom"value="{{$client->prenom}}"  name="prenom"id="prenom">
      </div>
-     <div class="mb-3 col-sm-3">
-        <label class=" container label-control mb-3"  for="age">Age</label>
-        <input class="form-control mb-3" type="text"placeholder="age" value="{{$client->age}}" name="age"id="age">
-     </div>
 
      <div class="mb-3 col-sm-3">
         <label class=" container label-control mb-3"  for="tel">Télèphone</label>
@@ -38,12 +34,7 @@
         <label class=" container label-control mb-3"  for="email">Email</label>
         <input class="form-control mb-3" type="email"placeholder="email"value="{{$client->email}}"  name="email" id="email" >
      </div>
-
-     <div class="mb-3 col-sm-3">
-        <label class=" container label-control mb-3"  for="adresse">Adresse</label>
-        <input class="form-control mb-3" type="textarea"placeholder="adresse"value="{{$client->adresse}}"  id="adresse"name="adresse">
-     </div>
-
+    
 
 </div>
 <div class="text-center me-3">

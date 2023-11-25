@@ -1,7 +1,10 @@
 @extends("layouts.template")
-@section('title',"Employeurs")
+@section('title',"Employés")
 @section('content')
 <table class="table table-striped">
+    <div class="container">
+        <a href="{{route('employe.create')}}" class="float-right">Ajouter Employés</a>
+    </div>
     <thead>
         <tr>
             <th>id</th>
@@ -11,7 +14,7 @@
             <th>Telephone</th>
             <th>Poste</th>
             <th>Salaire</th>
-            <th>Login</th>
+            <th>Email</th>
             <th>Password</th>
             <th>Action</th>
         </tr>
@@ -26,7 +29,7 @@
             <td>{{$employe->tel}}</td>
             <td>{{$employe->post}}</td>
             <td>{{$employe->salaire}}</td>
-            <td>{{$employe->login}}</td>
+            <td>{{$employe->email}}</td>
             <td>{{$employe->password}}</td>
             <td>
                 <a href="{{route('employe.edit',$employe->id)}}"><button class="btn btn-success">Modifier</button></a>
@@ -36,7 +39,7 @@
 
         @empty
         <tr>
-            <th colspan="10"@class(['text-center','p-4', 'font-bold' => true])>pas d'employeur</th>
+            <th colspan="10"@class(['text-center','p-4', 'font-bold' => true])>pas d'employés</th>
         </tr>
         @endforelse
     </tbody>

@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Marque;
 use App\Models\Reservation;
 use App\Models\Voiture;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,14 @@ class VoitureController extends Controller
     public function index()
     {
        $voitures=Voiture::paginate(5);
-        return view ('voiture.index',compact("voitures"))
+       //Prix de summer augmentation 20%
+       $dateJour=Carbon::now();
+       $ete= $dateJour->month>=5 && $dateJour->month<=9;
+       $prixSummer = $ete ? 1.2 : 1;
+       foreach($voitures as $voiture ){
+        $voiture->prix *= $prixSummer;
+       }
+               return view ('voiture.index',compact("voitures"))
         ->with('i',(request('page',1)-1)* 5);
 
     }
@@ -86,7 +94,7 @@ class VoitureController extends Controller
         $request->validate([
             'marque_id'=>'required|max:20',
             'photo'=>'image|mimes:png,jpg,webp,jpeg|max:2048',
-            
+
         ]);
     $inputs=$request->all();
     if($photo=$request->file("photo")){

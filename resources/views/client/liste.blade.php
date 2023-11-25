@@ -13,10 +13,8 @@
             <th>CIN</th>
             <th>Nom</th>
             <th>Prenom</th>
-            <th>Age</th>
             <th>Telephone</th>
             <th>Email</th>
-            <th>Address</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -27,10 +25,8 @@
             <td>{{$client->cin}}</td>
             <td>{{$client->nom}}</td>
             <td>{{$client->prenom}}</td>
-            <td>{{$client->age}}</td>
             <td>{{$client->tel}}</td>
             <td>{{$client->email}}</td>
-            <td>{{$client->adresse}}</td>
 
             <td >
                 <a href="{{route('client.update',$client->id)}}"><button class="btn btn-success">Modifier</button></a>

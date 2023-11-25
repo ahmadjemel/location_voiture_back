@@ -66,7 +66,7 @@ class ClientController extends Controller
             'prenom'=> 'required|max=20',
             'tel'=> 'required|min:8',
             'email'=> 'required|unique:clients,email,'.$client->id.'|max:150',
-            'password'=> '',
+            'password'=> 'required|min:8|',
 
         ]);
         $client->update($request->all());

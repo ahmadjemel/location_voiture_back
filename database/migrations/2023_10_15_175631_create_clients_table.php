@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -22,6 +31,10 @@ return new class extends Migration
             $table->integer("tel");
             $table->string("adresse",30);
             $table->string("email",80)->unique();
+
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
